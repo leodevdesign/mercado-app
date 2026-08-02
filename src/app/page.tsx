@@ -10,7 +10,7 @@ import { ReadyList } from '@/components/ReadyList';
 import { DeliveryChecklist } from '@/components/DeliveryChecklist';
 import { AuthModal, UserProfile } from '@/components/AuthModal';
 import { ListModeSelector } from '@/components/ListModeSelector';
-import { ShoppingBag, ClipboardList, Store, RefreshCw, PackageCheck } from 'lucide-react';
+import { ShoppingBag, ClipboardList, Store, RefreshCw, PackageCheck, LogIn, Users, Sparkles, Lock } from 'lucide-react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'catalog' | 'ready' | 'checklist'>('catalog');
@@ -21,16 +21,8 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Auth State (Default logged in user, or prompt login)
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>({
-    uid: 'user_default',
-    name: 'Leo (Filho)',
-    email: 'leo@familia.com',
-    role: 'Filho(a)',
-    familyCode: 'FAMILIA-NEXT-2026',
-    avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
-  });
-
+  // Auth State (Loaded dynamically from localStorage or null)
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Zustand Store
@@ -56,10 +48,42 @@ export default function Home() {
     loadArchivedOrderToCart,
   } = useShoppingStore();
 
-  // Prevent SSR Hydration Mismatch for localstorage state
+  // Load saved user profile & enforce Login screen on first visit
   useEffect(() => {
     setIsMounted(true);
+    try {
+      const savedUserStr = localStorage.getItem('mercado_user_profile');
+      if (savedUserStr) {
+        const parsed = JSON.parse(savedUserStr);
+        setCurrentUser(parsed);
+      } else {
+        // Enforce Login screen on first visit
+        setIsAuthModalOpen(true);
+      }
+    } catch (e) {
+      console.warn('Erro ao carregar perfil salvo:', e);
+      setIsAuthModalOpen(true);
+    }
   }, []);
+
+  const handleLoginUser = (user: UserProfile) => {
+    setCurrentUser(user);
+    try {
+      localStorage.setItem('mercado_user_profile', JSON.stringify(user));
+    } catch (e) {
+      console.warn('Erro ao salvar perfil no localStorage:', e);
+    }
+  };
+
+  const handleLogoutUser = () => {
+    setCurrentUser(null);
+    try {
+      localStorage.removeItem('mercado_user_profile');
+    } catch (e) {
+      console.warn('Erro ao remover perfil do localStorage:', e);
+    }
+    setIsAuthModalOpen(true);
+  };
 
   // Safe Fallbacks
   const safeCatalog = catalog && catalog.length > 0 ? catalog : initialCatalog;
@@ -211,6 +235,28 @@ export default function Home() {
           onOpenAuthModal={() => setIsAuthModalOpen(true)}
         />
 
+        {/* Welcome / Login Gate Banner if not logged in */}
+        {!currentUser && (
+          <div className="bg-amber-100 border-2 border-amber-300 rounded-3xl p-6 sm:p-8 mb-6 text-center space-y-4 shadow-sm animate-in fade-in duration-300">
+            <div className="w-16 h-16 bg-amber-600 text-white rounded-2xl flex items-center justify-center mx-auto shadow-md">
+              <Lock className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-amber-950">
+              ENTRE COM SUA CONTA PARA SALVAR SUAS LISTAS!
+            </h2>
+            <p className="text-amber-900 text-lg max-w-xl mx-auto font-medium">
+              Faça login ou entre com o Google para ter acesso à **Lista Compartilhada da Família** e à sua **Lista Pessoal**.
+            </p>
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="py-4 px-8 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 hover:from-amber-700 hover:to-orange-700 text-white font-black text-xl rounded-2xl shadow-lg transition-all hover:scale-105 inline-flex items-center gap-3"
+            >
+              <LogIn className="w-6 h-6" />
+              <span>ENTRAR OU CRIAR PERFIL AGORA</span>
+            </button>
+          </div>
+        )}
+
         {activeTab === 'catalog' ? (
           <div>
             {/* Form to Add New Product to Catalog */}
@@ -285,8 +331,8 @@ export default function Home() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         currentUser={currentUser}
-        onLogin={(user) => setCurrentUser(user)}
-        onLogout={() => setCurrentUser(null)}
+        onLogin={handleLoginUser}
+        onLogout={handleLogoutUser}
       />
 
       {/* Edit Quantity & Unit Modal */}
