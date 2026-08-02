@@ -8,6 +8,8 @@ import { AddProductForm } from '@/components/AddProductForm';
 import { EditQuantityModal } from '@/components/EditQuantityModal';
 import { ReadyList } from '@/components/ReadyList';
 import { DeliveryChecklist } from '@/components/DeliveryChecklist';
+import { AuthModal, UserProfile } from '@/components/AuthModal';
+import { ListModeSelector } from '@/components/ListModeSelector';
 import { ShoppingBag, ClipboardList, Store, RefreshCw, PackageCheck } from 'lucide-react';
 
 export default function Home() {
@@ -18,6 +20,17 @@ export default function Home() {
   const [modalInitialDetails, setModalInitialDetails] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  // Auth & List Mode State
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>({
+    uid: 'user_default',
+    name: 'Família',
+    email: 'familia@casa.com',
+    role: 'Pai',
+    familyCode: 'FAMILIA-NEXT-2026',
+  });
+  const [activeMode, setActiveMode] = useState<'family' | 'personal'>('family');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Zustand Store
   const {
@@ -188,6 +201,14 @@ export default function Home() {
 
       {/* Main Content Body */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-6 sm:px-6">
+        {/* List Mode Switcher: Family Shared vs Personal List */}
+        <ListModeSelector
+          activeMode={activeMode}
+          onChangeMode={setActiveMode}
+          currentUser={currentUser}
+          onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        />
+
         {activeTab === 'catalog' ? (
           <div>
             {/* Form to Add New Product to Catalog */}
@@ -254,8 +275,17 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="mt-12 py-6 text-center text-slate-500 border-t border-slate-200 text-base font-semibold">
-        <p>📱 Mercado App • Funciona 100% Offline e Salvo no seu Dispositivo</p>
+        <p>📱 Mercado App • Funciona 100% Offline e Sincronizado no Firebase</p>
       </footer>
+
+      {/* Auth & Family Profile Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        currentUser={currentUser}
+        onLogin={(user) => setCurrentUser(user)}
+        onLogout={() => setCurrentUser(null)}
+      />
 
       {/* Edit Quantity & Unit Modal */}
       <EditQuantityModal
