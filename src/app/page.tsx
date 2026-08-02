@@ -21,13 +21,14 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Auth State
+  // Auth State (Default with avatar fallback)
   const [currentUser, setCurrentUser] = useState<UserProfile | null>({
     uid: 'user_default',
-    name: 'Família',
-    email: 'familia@casa.com',
-    role: 'Pai',
+    name: 'Leo (Filho)',
+    email: 'leo@familia.com',
+    role: 'Filho(a)',
     familyCode: 'FAMILIA-NEXT-2026',
+    avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
   });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
@@ -69,7 +70,7 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className="w-16 h-16 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p className="text-2xl font-bold text-slate-700">Carregando sua lista de compras...</p>
         </div>
       </div>
@@ -116,8 +117,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-16">
-      {/* Top Header */}
-      <header className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white shadow-lg sticky top-0 z-40">
+      {/* Top Header - Modern Organic Emerald Theme */}
+      <header className="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-lg sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -128,7 +129,7 @@ export default function Home() {
                 <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
                   Meu Mercado
                 </h1>
-                <p className="text-blue-100 text-sm sm:text-base font-semibold">
+                <p className="text-emerald-100 text-sm sm:text-base font-semibold">
                   Lista fácil e rápida para WhatsApp
                 </p>
               </div>
@@ -137,7 +138,7 @@ export default function Home() {
             {totalCartCount > 0 && activeTab === 'catalog' && (
               <button
                 onClick={() => handleTabChange('ready')}
-                className="hidden md:flex items-center gap-2 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white px-5 py-2.5 rounded-2xl font-black text-lg shadow-md transition-transform hover:scale-105"
+                className="hidden md:flex items-center gap-2 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-amber-950 px-5 py-2.5 rounded-2xl font-black text-lg shadow-md transition-transform hover:scale-105"
               >
                 <ClipboardList className="w-6 h-6" />
                 <span>Ver Lista ({totalCartCount})</span>
@@ -145,56 +146,55 @@ export default function Home() {
             )}
           </div>
 
-          {/* Navigation 3-Tabs Bar */}
+          {/* Navigation 3-Tabs Bar with FIXED HEIGHT & NO WRAP SHIFT */}
           <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-4 pt-2">
+            {/* Tab 1 */}
             <button
               onClick={() => handleTabChange('catalog')}
-              className={`py-3.5 px-2 sm:px-4 rounded-2xl font-black text-base sm:text-lg flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 transition-all shadow-sm ${
+              className={`h-20 sm:h-22 px-2 sm:px-4 rounded-2xl font-black text-sm sm:text-lg flex flex-col items-center justify-center gap-1 transition-all shadow-sm relative ${
                 activeTab === 'catalog'
-                  ? 'bg-white text-blue-800 shadow-md ring-4 ring-white/30 scale-[1.02]'
-                  : 'bg-blue-800/60 hover:bg-blue-800/90 text-white/90 border border-blue-400/30'
+                  ? 'bg-white text-emerald-900 shadow-md ring-4 ring-white/30 scale-[1.02]'
+                  : 'bg-emerald-900/60 hover:bg-emerald-900/90 text-white/90 border border-emerald-500/30'
               }`}
             >
-              <ShoppingBag className="w-6 h-6 stroke-[2.5]" />
-              <span>1. MONTAR</span>
+              <ShoppingBag className="w-6 h-6 stroke-[2.5] shrink-0" />
+              <span className="whitespace-nowrap">1. MONTAR</span>
             </button>
 
+            {/* Tab 2 */}
             <button
               onClick={() => handleTabChange('ready')}
-              className={`py-3.5 px-2 sm:px-4 rounded-2xl font-black text-base sm:text-lg flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 transition-all shadow-sm relative ${
+              className={`h-20 sm:h-22 px-2 sm:px-4 rounded-2xl font-black text-sm sm:text-lg flex flex-col items-center justify-center gap-1 transition-all shadow-sm relative ${
                 activeTab === 'ready'
-                  ? 'bg-white text-blue-800 shadow-md ring-4 ring-white/30 scale-[1.02]'
-                  : 'bg-blue-800/60 hover:bg-blue-800/90 text-white/90 border border-blue-400/30'
+                  ? 'bg-white text-emerald-900 shadow-md ring-4 ring-white/30 scale-[1.02]'
+                  : 'bg-emerald-900/60 hover:bg-emerald-900/90 text-white/90 border border-emerald-500/30'
               }`}
             >
-              <ClipboardList className="w-6 h-6 stroke-[2.5]" />
-              <div className="flex items-center gap-1">
-                <span>2. VER LISTA</span>
-                {totalCartCount > 0 && (
-                  <span className="bg-green-500 text-white text-xs sm:text-sm px-2 py-0.5 rounded-full font-black shadow-xs">
-                    {totalCartCount}
-                  </span>
-                )}
-              </div>
+              <ClipboardList className="w-6 h-6 stroke-[2.5] shrink-0" />
+              <span className="whitespace-nowrap">2. VER LISTA</span>
+              {totalCartCount > 0 && (
+                <span className="absolute top-2 right-2 sm:top-2.5 sm:right-3 bg-emerald-500 text-white text-xs sm:text-sm w-6 h-6 sm:w-7 sm:h-7 rounded-full font-black flex items-center justify-center shadow-md animate-in zoom-in-50 duration-200">
+                  {totalCartCount}
+                </span>
+              )}
             </button>
 
+            {/* Tab 3 */}
             <button
               onClick={() => handleTabChange('checklist')}
-              className={`py-3.5 px-2 sm:px-4 rounded-2xl font-black text-base sm:text-lg flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 transition-all shadow-sm relative ${
+              className={`h-20 sm:h-22 px-2 sm:px-4 rounded-2xl font-black text-sm sm:text-lg flex flex-col items-center justify-center gap-1 transition-all shadow-sm relative ${
                 activeTab === 'checklist'
-                  ? 'bg-white text-blue-800 shadow-md ring-4 ring-white/30 scale-[1.02]'
-                  : 'bg-blue-800/60 hover:bg-blue-800/90 text-white/90 border border-blue-400/30'
+                  ? 'bg-white text-emerald-900 shadow-md ring-4 ring-white/30 scale-[1.02]'
+                  : 'bg-emerald-900/60 hover:bg-emerald-900/90 text-white/90 border border-emerald-500/30'
               }`}
             >
-              <PackageCheck className="w-6 h-6 stroke-[2.5]" />
-              <div className="flex items-center gap-1">
-                <span>3. CONFERIR</span>
-                {totalChecklistCount > 0 && (
-                  <span className="bg-amber-400 text-amber-950 text-xs sm:text-sm px-2 py-0.5 rounded-full font-black shadow-xs">
-                    {totalChecklistCount}
-                  </span>
-                )}
-              </div>
+              <PackageCheck className="w-6 h-6 stroke-[2.5] shrink-0" />
+              <span className="whitespace-nowrap">3. CONFERIR</span>
+              {totalChecklistCount > 0 && (
+                <span className="absolute top-2 right-2 sm:top-2.5 sm:right-3 bg-amber-400 text-amber-950 text-xs sm:text-sm w-6 h-6 sm:w-7 sm:h-7 rounded-full font-black flex items-center justify-center shadow-md animate-in zoom-in-50 duration-200">
+                  {totalChecklistCount}
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function Home() {
                     resetCatalogToDefault();
                   }
                 }}
-                className="flex items-center gap-1.5 text-blue-700 hover:text-blue-900 font-bold text-sm bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl border border-blue-200"
+                className="flex items-center gap-1.5 text-emerald-800 hover:text-emerald-950 font-bold text-sm bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200"
               >
                 <RefreshCw className="w-4 h-4" />
                 Restaurar Padrões
