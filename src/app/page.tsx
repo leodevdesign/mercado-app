@@ -21,7 +21,7 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Auth & List Mode State
+  // Auth State
   const [currentUser, setCurrentUser] = useState<UserProfile | null>({
     uid: 'user_default',
     name: 'Família',
@@ -29,7 +29,6 @@ export default function Home() {
     role: 'Pai',
     familyCode: 'FAMILIA-NEXT-2026',
   });
-  const [activeMode, setActiveMode] = useState<'family' | 'personal'>('family');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Zustand Store
@@ -38,6 +37,8 @@ export default function Home() {
     cart,
     activeChecklist,
     orderHistory,
+    activeMode,
+    setActiveMode,
     addProductToCatalog,
     removeProductFromCatalog,
     resetCatalogToDefault,
@@ -204,7 +205,7 @@ export default function Home() {
         {/* List Mode Switcher: Family Shared vs Personal List */}
         <ListModeSelector
           activeMode={activeMode}
-          onChangeMode={setActiveMode}
+          onChangeMode={(mode) => setActiveMode(mode)}
           currentUser={currentUser}
           onOpenAuthModal={() => setIsAuthModalOpen(true)}
         />
@@ -218,7 +219,7 @@ export default function Home() {
             <div className="mb-4 flex items-center justify-between flex-wrap gap-2">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                  📌 SEUS ITENS RECORRENTES
+                  📌 SEUS ITENS RECORRENTES ({activeMode === 'family' ? 'Mundo Família' : 'Privativo'})
                 </h2>
                 <p className="text-slate-600 font-semibold text-base mt-1">
                   Toque em qualquer produto abaixo para escolher a quantidade, unidade e observações.

@@ -11,21 +11,35 @@ interface ShoppingStore {
   removeProductFromCatalog: (id: string) => void;
   resetCatalogToDefault: () => void;
 
-  // Pedido Atual da Semana (Carrinho)
+  // Active Mode (Family vs Personal)
+  activeMode: 'family' | 'personal';
+  setActiveMode: (mode: 'family' | 'personal') => void;
+
+  // Family Shared List Storage
+  familyCart: CartItem[];
+  familyChecklist: ChecklistItem[];
+
+  // Personal Individual List Storage
+  personalCart: CartItem[];
+  personalChecklist: ChecklistItem[];
+
+  // Active Computed Cart & Checklist Shortcuts
   cart: CartItem[];
+  activeChecklist: ChecklistItem[];
+
+  // Actions
   addToCart: (product: BaseProduct, quantity: string | number, unit?: string, customDetails?: string) => void;
   removeFromCart: (productId: string) => void;
   updateCartItem: (productId: string, quantity: string | number, unit?: string, customDetails?: string) => void;
   clearCart: () => void;
 
-  // Checklist de Entrega Atual
-  activeChecklist: ChecklistItem[];
+  // Checklist Actions
   syncCartToChecklist: () => void;
   toggleChecklistItemStatus: (productId: string, status: DeliveryStatus) => void;
   setChecklistItemIssueNote: (productId: string, note: string) => void;
   completeAndArchiveOrder: () => void;
 
-  // Histórico de Pedidos Arquivados & Clonagem de Pedidos
+  // Order History
   orderHistory: ArchivedOrder[];
   deleteArchivedOrder: (orderId: string) => void;
   loadArchivedOrderToCart: (orderId: string) => void;
@@ -279,9 +293,28 @@ export const useShoppingStore = create<ShoppingStore>()(
   persist(
     (set, get) => ({
       catalog: initialCatalog,
+      activeMode: 'family',
+
+      familyCart: [],
+      familyChecklist: [],
+      personalCart: [],
+      personalChecklist: [],
+
+      // Dynamic getters
       cart: [],
       activeChecklist: [],
       orderHistory: [],
+
+      setActiveMode: (mode) =>
+        set((state) => {
+          const nextCart = mode === 'family' ? state.familyCart : state.personalCart;
+          const nextChecklist = mode === 'family' ? state.familyChecklist : state.personalChecklist;
+          return {
+            activeMode: mode,
+            cart: nextCart || [],
+            activeChecklist: nextChecklist || [],
+          };
+        }),
 
       addProductToCatalog: (newProd) =>
         set((state) => ({
@@ -294,11 +327,18 @@ export const useShoppingStore = create<ShoppingStore>()(
         })),
 
       removeProductFromCatalog: (id) =>
-        set((state) => ({
-          catalog: (state.catalog || []).filter((p) => p.id !== id),
-          cart: (state.cart || []).filter((item) => item.product?.id !== id),
-          activeChecklist: (state.activeChecklist || []).filter((item) => item.product?.id !== id),
-        })),
+        set((state) => {
+          const updatedFamilyCart = (state.familyCart || []).filter((item) => item.product?.id !== id);
+          const updatedPersonalCart = (state.personalCart || []).filter((item) => item.product?.id !== id);
+          const activeC = state.activeMode === 'family' ? updatedFamilyCart : updatedPersonalCart;
+
+          return {
+            catalog: (state.catalog || []).filter((p) => p.id !== id),
+            familyCart: updatedFamilyCart,
+            personalCart: updatedPersonalCart,
+            cart: activeC,
+          };
+        }),
 
       resetCatalogToDefault: () =>
         set({
@@ -307,14 +347,15 @@ export const useShoppingStore = create<ShoppingStore>()(
 
       addToCart: (product, quantity, unit, customDetails) =>
         set((state) => {
-          const currentCart = state.cart || [];
-          const existingIndex = currentCart.findIndex((item) => item.product?.id === product.id);
+          const isFamily = state.activeMode === 'family';
+          const targetCart = isFamily ? state.familyCart || [] : state.personalCart || [];
+          const existingIndex = targetCart.findIndex((item) => item.product?.id === product.id);
           const finalUnit = unit || product.defaultUnit;
           const finalDetails = customDetails !== undefined ? customDetails : product.details;
 
           let updatedCart: CartItem[];
           if (existingIndex > -1) {
-            updatedCart = [...currentCart];
+            updatedCart = [...targetCart];
             updatedCart[existingIndex] = {
               product,
               quantity,
@@ -323,14 +364,14 @@ export const useShoppingStore = create<ShoppingStore>()(
             };
           } else {
             updatedCart = [
-              ...currentCart,
+              ...targetCart,
               { product, quantity, unit: finalUnit, customDetails: finalDetails },
             ];
           }
 
-          const currentChecklist = state.activeChecklist || [];
+          const targetChecklist = isFamily ? state.familyChecklist || [] : state.personalChecklist || [];
           const updatedChecklist: ChecklistItem[] = updatedCart.map((cItem) => {
-            const existingCheck = currentChecklist.find((check) => check.product?.id === cItem.product.id);
+            const existingCheck = targetChecklist.find((check) => check.product?.id === cItem.product.id);
             return {
               ...cItem,
               status: existingCheck ? existingCheck.status : 'pending',
@@ -338,18 +379,34 @@ export const useShoppingStore = create<ShoppingStore>()(
             };
           });
 
-          return { cart: updatedCart, activeChecklist: updatedChecklist };
+          return isFamily
+            ? { familyCart: updatedCart, familyChecklist: updatedChecklist, cart: updatedCart, activeChecklist: updatedChecklist }
+            : { personalCart: updatedCart, personalChecklist: updatedChecklist, cart: updatedCart, activeChecklist: updatedChecklist };
         }),
 
       removeFromCart: (productId) =>
-        set((state) => ({
-          cart: (state.cart || []).filter((item) => item.product?.id !== productId),
-          activeChecklist: (state.activeChecklist || []).filter((item) => item.product?.id !== productId),
-        })),
+        set((state) => {
+          const isFamily = state.activeMode === 'family';
+          const updatedCart = isFamily
+            ? (state.familyCart || []).filter((item) => item.product?.id !== productId)
+            : (state.personalCart || []).filter((item) => item.product?.id !== productId);
+
+          const updatedChecklist = isFamily
+            ? (state.familyChecklist || []).filter((item) => item.product?.id !== productId)
+            : (state.personalChecklist || []).filter((item) => item.product?.id !== productId);
+
+          return isFamily
+            ? { familyCart: updatedCart, familyChecklist: updatedChecklist, cart: updatedCart, activeChecklist: updatedChecklist }
+            : { personalCart: updatedCart, personalChecklist: updatedChecklist, cart: updatedCart, activeChecklist: updatedChecklist };
+        }),
 
       updateCartItem: (productId, quantity, unit, customDetails) =>
         set((state) => {
-          const updatedCart = (state.cart || []).map((item) =>
+          const isFamily = state.activeMode === 'family';
+          const targetCart = isFamily ? state.familyCart || [] : state.personalCart || [];
+          const targetChecklist = isFamily ? state.familyChecklist || [] : state.personalChecklist || [];
+
+          const updatedCart = targetCart.map((item) =>
             item.product?.id === productId
               ? {
                   ...item,
@@ -360,7 +417,7 @@ export const useShoppingStore = create<ShoppingStore>()(
               : item
           );
 
-          const updatedChecklist = (state.activeChecklist || []).map((item) =>
+          const updatedChecklist = targetChecklist.map((item) =>
             item.product?.id === productId
               ? {
                   ...item,
@@ -371,15 +428,23 @@ export const useShoppingStore = create<ShoppingStore>()(
               : item
           );
 
-          return { cart: updatedCart, activeChecklist: updatedChecklist };
+          return isFamily
+            ? { familyCart: updatedCart, familyChecklist: updatedChecklist, cart: updatedCart, activeChecklist: updatedChecklist }
+            : { personalCart: updatedCart, personalChecklist: updatedChecklist, cart: updatedCart, activeChecklist: updatedChecklist };
         }),
 
-      clearCart: () => set({ cart: [], activeChecklist: [] }),
+      clearCart: () =>
+        set((state) => {
+          return state.activeMode === 'family'
+            ? { familyCart: [], familyChecklist: [], cart: [], activeChecklist: [] }
+            : { personalCart: [], personalChecklist: [], cart: [], activeChecklist: [] };
+        }),
 
       syncCartToChecklist: () => {
         const state = get();
-        const currentCart = state.cart || [];
-        const currentChecklist = state.activeChecklist || [];
+        const isFamily = state.activeMode === 'family';
+        const currentCart = isFamily ? state.familyCart || [] : state.personalCart || [];
+        const currentChecklist = isFamily ? state.familyChecklist || [] : state.personalChecklist || [];
 
         const syncedChecklist: ChecklistItem[] = currentCart.map((cItem) => {
           const existingCheck = currentChecklist.find((check) => check.product?.id === cItem.product.id);
@@ -390,31 +455,50 @@ export const useShoppingStore = create<ShoppingStore>()(
           };
         });
 
-        set({ activeChecklist: syncedChecklist });
+        if (isFamily) {
+          set({ familyChecklist: syncedChecklist, activeChecklist: syncedChecklist });
+        } else {
+          set({ personalChecklist: syncedChecklist, activeChecklist: syncedChecklist });
+        }
       },
 
       toggleChecklistItemStatus: (productId, status) =>
-        set((state) => ({
-          activeChecklist: (state.activeChecklist || []).map((item) =>
+        set((state) => {
+          const isFamily = state.activeMode === 'family';
+          const targetChecklist = isFamily ? state.familyChecklist || [] : state.personalChecklist || [];
+
+          const updatedChecklist = targetChecklist.map((item) =>
             item.product?.id === productId
               ? {
                   ...item,
                   status: item.status === status ? 'pending' : status,
                 }
               : item
-          ),
-        })),
+          );
+
+          return isFamily
+            ? { familyChecklist: updatedChecklist, activeChecklist: updatedChecklist }
+            : { personalChecklist: updatedChecklist, activeChecklist: updatedChecklist };
+        }),
 
       setChecklistItemIssueNote: (productId, note) =>
-        set((state) => ({
-          activeChecklist: (state.activeChecklist || []).map((item) =>
+        set((state) => {
+          const isFamily = state.activeMode === 'family';
+          const targetChecklist = isFamily ? state.familyChecklist || [] : state.personalChecklist || [];
+
+          const updatedChecklist = targetChecklist.map((item) =>
             item.product?.id === productId ? { ...item, issueNote: note } : item
-          ),
-        })),
+          );
+
+          return isFamily
+            ? { familyChecklist: updatedChecklist, activeChecklist: updatedChecklist }
+            : { personalChecklist: updatedChecklist, activeChecklist: updatedChecklist };
+        }),
 
       completeAndArchiveOrder: () => {
         const state = get();
-        const currentChecklist = state.activeChecklist || [];
+        const isFamily = state.activeMode === 'family';
+        const currentChecklist = isFamily ? state.familyChecklist || [] : state.personalChecklist || [];
         if (currentChecklist.length === 0) return;
 
         const deliveredCount = currentChecklist.filter((item) => item.status === 'delivered').length;
@@ -437,11 +521,23 @@ export const useShoppingStore = create<ShoppingStore>()(
           issuesCount,
         };
 
-        set({
-          orderHistory: [newArchivedOrder, ...(state.orderHistory || [])],
-          cart: [],
-          activeChecklist: [],
-        });
+        if (isFamily) {
+          set({
+            orderHistory: [newArchivedOrder, ...(state.orderHistory || [])],
+            familyCart: [],
+            familyChecklist: [],
+            cart: [],
+            activeChecklist: [],
+          });
+        } else {
+          set({
+            orderHistory: [newArchivedOrder, ...(state.orderHistory || [])],
+            personalCart: [],
+            personalChecklist: [],
+            cart: [],
+            activeChecklist: [],
+          });
+        }
       },
 
       deleteArchivedOrder: (orderId) =>
@@ -466,10 +562,10 @@ export const useShoppingStore = create<ShoppingStore>()(
             status: 'pending',
           }));
 
-          return {
-            cart: newCart,
-            activeChecklist: newChecklist,
-          };
+          const isFamily = state.activeMode === 'family';
+          return isFamily
+            ? { familyCart: newCart, familyChecklist: newChecklist, cart: newCart, activeChecklist: newChecklist }
+            : { personalCart: newCart, personalChecklist: newChecklist, cart: newCart, activeChecklist: newChecklist };
         }),
     }),
     {
@@ -498,13 +594,26 @@ export const useShoppingStore = create<ShoppingStore>()(
         );
 
         const mergedCatalog = [...updatedPersisted, ...missingInitial];
+        const activeMode = persistedState.activeMode || 'family';
+        const familyCart = Array.isArray(persistedState.familyCart) ? persistedState.familyCart : (Array.isArray(persistedState.cart) ? persistedState.cart : []);
+        const personalCart = Array.isArray(persistedState.personalCart) ? persistedState.personalCart : [];
+        const familyChecklist = Array.isArray(persistedState.familyChecklist) ? persistedState.familyChecklist : (Array.isArray(persistedState.activeChecklist) ? persistedState.activeChecklist : []);
+        const personalChecklist = Array.isArray(persistedState.personalChecklist) ? persistedState.personalChecklist : [];
+
+        const cart = activeMode === 'family' ? familyCart : personalCart;
+        const activeChecklist = activeMode === 'family' ? familyChecklist : personalChecklist;
 
         return {
           ...currentState,
           ...persistedState,
           catalog: mergedCatalog.length > 0 ? mergedCatalog : initialCatalog,
-          cart: Array.isArray(persistedState.cart) ? persistedState.cart : [],
-          activeChecklist: Array.isArray(persistedState.activeChecklist) ? persistedState.activeChecklist : [],
+          activeMode,
+          familyCart,
+          personalCart,
+          familyChecklist,
+          personalChecklist,
+          cart,
+          activeChecklist,
           orderHistory: Array.isArray(persistedState.orderHistory) ? persistedState.orderHistory : [],
         };
       },
