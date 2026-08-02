@@ -44,7 +44,6 @@ export const FavoritesList: React.FC<FavoritesListProps> = ({
     'Bebidas',
     'Limpeza',
     'Higiene Pessoal',
-    'Outros',
   ];
 
   // Filter catalog based on search
@@ -66,43 +65,43 @@ export const FavoritesList: React.FC<FavoritesListProps> = ({
     switch (cat) {
       case 'Hortifrúti':
         return {
-          bg: 'bg-emerald-100 text-emerald-950 border-emerald-300',
-          icon: <Apple className="w-5 h-5 text-emerald-700" />,
+          bg: 'bg-amber-100 text-amber-950 border-amber-300',
+          icon: <Apple className="w-5 h-5 text-amber-800" />,
         };
       case 'Laticínios':
         return {
           bg: 'bg-amber-100 text-amber-950 border-amber-300',
-          icon: <Milk className="w-5 h-5 text-amber-700" />,
+          icon: <Milk className="w-5 h-5 text-amber-800" />,
         };
       case 'Açougue':
         return {
           bg: 'bg-red-100 text-red-950 border-red-300',
-          icon: <Beef className="w-5 h-5 text-red-700" />,
+          icon: <Beef className="w-5 h-5 text-red-800" />,
         };
       case 'Padaria':
         return {
           bg: 'bg-orange-100 text-orange-950 border-orange-300',
-          icon: <Croissant className="w-5 h-5 text-orange-700" />,
+          icon: <Croissant className="w-5 h-5 text-orange-800" />,
         };
       case 'Mercearia':
         return {
-          bg: 'bg-blue-100 text-blue-950 border-blue-300',
-          icon: <ShoppingBag className="w-5 h-5 text-blue-700" />,
+          bg: 'bg-amber-100 text-amber-950 border-amber-300',
+          icon: <ShoppingBag className="w-5 h-5 text-amber-800" />,
         };
       case 'Bebidas':
         return {
           bg: 'bg-purple-100 text-purple-950 border-purple-300',
-          icon: <Coffee className="w-5 h-5 text-purple-700" />,
+          icon: <Coffee className="w-5 h-5 text-purple-800" />,
         };
       case 'Limpeza':
         return {
           bg: 'bg-cyan-100 text-cyan-950 border-cyan-300',
-          icon: <SprayCan className="w-5 h-5 text-cyan-700" />,
+          icon: <SprayCan className="w-5 h-5 text-cyan-800" />,
         };
       case 'Higiene Pessoal':
         return {
-          bg: 'bg-teal-100 text-teal-950 border-teal-300',
-          icon: <ShowerHead className="w-5 h-5 text-teal-700" />,
+          bg: 'bg-orange-100 text-orange-950 border-orange-300',
+          icon: <ShowerHead className="w-5 h-5 text-orange-800" />,
         };
       default:
         return {
@@ -124,7 +123,7 @@ export const FavoritesList: React.FC<FavoritesListProps> = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="🔎 Procurar por Arroz, Feijão, Café, Azeitona, Palmito, Banana..."
-          className="w-full h-16 pl-14 pr-24 text-xl font-bold text-slate-900 bg-white border-3 border-slate-300 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-200 focus:outline-none"
+          className="w-full h-16 pl-14 pr-24 text-xl font-bold text-slate-900 bg-white border-3 border-slate-300 rounded-2xl shadow-sm focus:border-amber-600 focus:ring-4 focus:ring-amber-200 focus:outline-none"
         />
         {searchTerm && (
           <button
@@ -167,8 +166,8 @@ export const FavoritesList: React.FC<FavoritesListProps> = ({
                     key={`${product.id}_${idx}`}
                     className={`relative flex flex-col justify-between rounded-3xl border-3 overflow-hidden transition-all duration-200 shadow-xs hover:shadow-md ${
                       isAdded
-                        ? 'bg-green-50 border-green-600 ring-2 ring-green-500/20'
-                        : 'bg-slate-50 border-slate-300 hover:border-blue-500 hover:bg-blue-50/40'
+                        ? 'bg-amber-100/60 border-amber-600 ring-2 ring-amber-500/20'
+                        : 'bg-slate-50 border-slate-300 hover:border-amber-500 hover:bg-amber-50/40'
                     }`}
                   >
                     {/* Delete Catalog Product Button */}
@@ -225,7 +224,7 @@ export const FavoritesList: React.FC<FavoritesListProps> = ({
                         {(product.variety || product.brand) && (
                           <div className="flex flex-wrap gap-1.5 my-2">
                             {product.variety && (
-                              <span className="bg-blue-100 text-blue-900 font-extrabold text-xs px-2.5 py-0.5 rounded-lg border border-blue-200">
+                              <span className="bg-amber-100 text-amber-950 font-extrabold text-xs px-2.5 py-0.5 rounded-lg border border-amber-300">
                                 Tipo: {product.variety}
                               </span>
                             )}
@@ -269,8 +268,8 @@ export const FavoritesList: React.FC<FavoritesListProps> = ({
                         onClick={() => onSelectProduct(product)}
                         className={`w-full py-3.5 px-4 rounded-2xl font-black text-lg flex items-center justify-center gap-2 transition-all shadow-xs ${
                           isAdded
-                            ? 'bg-green-600 hover:bg-green-700 text-white shadow-md'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white hover:scale-[1.01]'
+                            ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-md'
+                            : 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white hover:scale-[1.01]'
                         }`}
                       >
                         {isAdded ? (

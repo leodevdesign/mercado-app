@@ -179,11 +179,11 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
 
   return (
     <div className="bg-white rounded-3xl shadow-md border-2 border-slate-200 overflow-hidden mb-8 transition-all">
-      {/* Header Toggle - Fresh Emerald Organic Theme */}
+      {/* Header Toggle - Warm Amber & Terracotta Theme */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-5 bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 text-white flex items-center justify-between font-black text-xl hover:from-emerald-800 hover:to-teal-800 transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300"
+        className="w-full p-5 bg-gradient-to-r from-amber-700 via-orange-600 to-amber-800 text-white flex items-center justify-between font-black text-xl hover:from-amber-800 hover:to-orange-700 transition-all focus:outline-none focus:ring-4 focus:ring-amber-300"
       >
         <div className="flex items-center gap-3">
           <PlusCircle className="w-8 h-8 stroke-[2.5]" />
@@ -198,15 +198,15 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
 
       {/* Form Content */}
       {isOpen && (
-        <div className="p-6 sm:p-8 space-y-7 bg-slate-50 border-t-2 border-slate-200">
+        <div className="p-6 sm:p-8 space-y-7 bg-amber-50/30 border-t-2 border-slate-200">
           {/* Mode Switcher Buttons */}
-          <div className="grid grid-cols-2 gap-3 bg-white p-2.5 rounded-2xl border-2 border-slate-200 shadow-xs">
+          <div className="grid grid-cols-2 gap-3 bg-white p-2.5 rounded-2xl border-2 border-amber-200 shadow-xs">
             <button
               type="button"
               onClick={() => setMode('guided')}
               className={`py-3.5 px-4 rounded-xl font-black text-base sm:text-lg flex items-center justify-center gap-2 transition-all ${
                 mode === 'guided'
-                  ? 'bg-emerald-600 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-md'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
               }`}
             >
@@ -219,7 +219,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
               onClick={() => setMode('manual')}
               className={`py-3.5 px-4 rounded-xl font-black text-base sm:text-lg flex items-center justify-center gap-2 transition-all ${
                 mode === 'manual'
-                  ? 'bg-emerald-600 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-md'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
               }`}
             >
@@ -234,7 +234,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
               {/* Step 1: Category Selector */}
               <div className="bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs">
                 <label className="block text-lg font-extrabold text-slate-800 mb-3 flex items-center gap-2">
-                  <Package className="w-6 h-6 text-emerald-600" />
+                  <Package className="w-6 h-6 text-amber-700" />
                   <span>1. Escolha a Categoria:</span>
                 </label>
 
@@ -246,7 +246,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                       onClick={() => handleCategorySelect(cat)}
                       className={`px-4 py-2.5 rounded-xl font-black text-base transition-all border-2 ${
                         guidedCategory === cat
-                          ? 'bg-emerald-600 text-white border-emerald-700 shadow-md scale-105'
+                          ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white border-amber-700 shadow-md scale-105'
                           : 'bg-slate-100 text-slate-800 border-slate-200 hover:bg-slate-200'
                       }`}
                     >
@@ -260,7 +260,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
               {currentCategoryPresets.length > 0 && (
                 <div className="bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs">
                   <label className="block text-lg font-extrabold text-slate-800 mb-3 flex items-center gap-2">
-                    <Tag className="w-6 h-6 text-emerald-600" />
+                    <Tag className="w-6 h-6 text-amber-700" />
                     <span>2. Escolha o Produto:</span>
                   </label>
 
@@ -272,8 +272,8 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                         onClick={() => handlePresetSelect(preset)}
                         className={`px-4 py-3 rounded-2xl font-black text-lg transition-all border-2 ${
                           selectedPreset?.id === preset.id
-                            ? 'bg-teal-600 text-white border-teal-700 shadow-md ring-2 ring-teal-300'
-                            : 'bg-slate-50 text-slate-900 border-slate-300 hover:bg-emerald-50'
+                            ? 'bg-amber-600 text-white border-amber-700 shadow-md ring-2 ring-amber-300'
+                            : 'bg-slate-50 text-slate-900 border-slate-300 hover:bg-amber-50'
                         }`}
                       >
                         {preset.name}
@@ -300,7 +300,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                             onClick={() => setSelectedVariety(v)}
                             className={`px-4 py-2 rounded-xl font-extrabold text-base border-2 transition-all ${
                               selectedVariety === v
-                                ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm'
+                                ? 'bg-amber-600 text-white border-amber-700 shadow-sm'
                                 : 'bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200'
                             }`}
                           >
@@ -325,7 +325,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                             onClick={() => setSelectedBrand(b)}
                             className={`px-4 py-2 rounded-xl font-extrabold text-base border-2 transition-all ${
                               selectedBrand === b
-                                ? 'bg-purple-600 text-white border-purple-700 shadow-sm'
+                                ? 'bg-orange-600 text-white border-orange-700 shadow-sm'
                                 : 'bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200'
                             }`}
                           >
@@ -339,7 +339,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                   {/* Recommended Unit Selector */}
                   <div>
                     <label className="block text-base font-extrabold text-slate-700 mb-2 flex items-center gap-2">
-                      <Scale className="w-5 h-5 text-emerald-600" />
+                      <Scale className="w-5 h-5 text-amber-700" />
                       Unidade de Medida:
                     </label>
 
@@ -347,7 +347,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                       <select
                         value={guidedUnit}
                         onChange={(e) => setGuidedUnit(e.target.value)}
-                        className="w-full h-14 pl-5 pr-14 text-xl font-bold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl focus:border-emerald-600 focus:ring-4 focus:ring-emerald-200 focus:outline-none appearance-none cursor-pointer"
+                        className="w-full h-14 pl-5 pr-14 text-xl font-bold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl focus:border-amber-600 focus:ring-4 focus:ring-amber-200 focus:outline-none appearance-none cursor-pointer"
                       >
                         {standardUnits.filter((u) => u !== 'Personalizada...').map((u, idx) => (
                           <option key={`${u}_${idx}`} value={u}>
@@ -355,7 +355,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                           </option>
                         ))}
                       </select>
-                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-emerald-700">
+                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-amber-700">
                         <ChevronDown className="w-7 h-7 stroke-[3]" />
                       </div>
                     </div>
@@ -364,7 +364,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                   {/* Suggested Observations Chips */}
                   <div>
                     <label className="block text-base font-extrabold text-slate-700 mb-2 flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-emerald-600" />
+                      <FileText className="w-5 h-5 text-amber-700" />
                       Observações (Toque para selecionar):
                     </label>
 
@@ -373,7 +373,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                       value={guidedDetails}
                       onChange={(e) => setGuidedDetails(e.target.value)}
                       placeholder="Ex: firmes, não podres"
-                      className="w-full h-14 px-4 text-lg font-semibold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl mb-3 focus:outline-none focus:ring-4 focus:ring-emerald-200"
+                      className="w-full h-14 px-4 text-lg font-semibold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl mb-3 focus:outline-none focus:ring-4 focus:ring-amber-200"
                     />
 
                     <div className="flex flex-wrap gap-2">
@@ -382,7 +382,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                           key={`${obs}_${idx}`}
                           type="button"
                           onClick={() => handleChipClickGuided(obs)}
-                          className="px-3.5 py-2 bg-slate-100 hover:bg-emerald-100 hover:text-emerald-900 rounded-xl font-bold text-sm text-slate-800 border border-slate-300 transition-all"
+                          className="px-3.5 py-2 bg-slate-100 hover:bg-amber-100 hover:text-amber-950 rounded-xl font-bold text-sm text-slate-800 border border-slate-300 transition-all"
                         >
                           + {obs}
                         </button>
@@ -394,15 +394,15 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
 
               {/* Preview Card Before Saving */}
               {selectedPreset && (
-                <div className="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-5 text-emerald-950">
-                  <span className="block text-xs font-black uppercase tracking-wider text-emerald-800 mb-1">
+                <div className="bg-amber-100/70 border-2 border-amber-300 rounded-2xl p-5 text-amber-950">
+                  <span className="block text-xs font-black uppercase tracking-wider text-amber-800 mb-1">
                     Pré-visualização do Item Cadastrado:
                   </span>
                   <div className="text-2xl font-black text-slate-900">
                     {selectedPreset.name} {selectedVariety} {selectedBrand}
                   </div>
-                  <div className="text-base font-bold text-emerald-900 mt-1">
-                    Unidade: <span className="bg-emerald-200 px-2 py-0.5 rounded-lg">{guidedUnit}</span>
+                  <div className="text-base font-bold text-amber-900 mt-1">
+                    Unidade: <span className="bg-amber-200 px-2 py-0.5 rounded-lg border border-amber-300">{guidedUnit}</span>
                     {guidedDetails && <span className="ml-2 font-semibold">📌 ({guidedDetails})</span>}
                   </div>
                 </div>
@@ -410,7 +410,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
 
               <button
                 type="submit"
-                className="w-full py-5 px-6 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black text-xl rounded-2xl shadow-lg transition-all hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-emerald-300 flex items-center justify-center gap-2"
+                className="w-full py-5 px-6 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 hover:from-amber-700 hover:to-orange-700 text-white font-black text-xl rounded-2xl shadow-lg transition-all hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-amber-300 flex items-center justify-center gap-2"
               >
                 <Check className="w-7 h-7 stroke-[3]" />
                 <span>+ ADICIONAR AO SEU CATÁLOGO</span>
@@ -423,7 +423,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
             <form onSubmit={handleSubmitManual} className="space-y-6">
               <div>
                 <label className="block text-xl font-extrabold text-slate-800 mb-3 flex items-center gap-2">
-                  <Tag className="w-6 h-6 text-emerald-600" />
+                  <Tag className="w-6 h-6 text-amber-700" />
                   <span>Nome do Produto</span> <span className="text-red-600">*</span>
                 </label>
                 <input
@@ -432,21 +432,21 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                   value={manualName}
                   onChange={(e) => setManualName(e.target.value)}
                   placeholder="Ex: Queijo Minas Frescal, Tomate Débora, Detergente"
-                  className="w-full h-16 px-5 text-xl font-bold text-slate-900 bg-white border-2 border-slate-300 rounded-2xl focus:border-emerald-600 focus:ring-4 focus:ring-emerald-200 focus:outline-none shadow-xs"
+                  className="w-full h-16 px-5 text-xl font-bold text-slate-900 bg-white border-2 border-slate-300 rounded-2xl focus:border-amber-600 focus:ring-4 focus:ring-amber-200 focus:outline-none shadow-xs"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-7 pt-2">
                 <div className="bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs">
                   <label className="block text-lg font-extrabold text-slate-800 mb-3 flex items-center gap-2">
-                    <Package className="w-6 h-6 text-emerald-600" />
+                    <Package className="w-6 h-6 text-amber-700" />
                     <span>Categoria do Produto</span> <span className="text-red-600">*</span>
                   </label>
                   <div className="relative">
                     <select
                       value={manualCategory}
                       onChange={(e) => setManualCategory(e.target.value as Category)}
-                      className="w-full h-16 pl-5 pr-14 text-xl font-bold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:border-emerald-600 focus:ring-4 focus:ring-emerald-200 focus:outline-none appearance-none cursor-pointer"
+                      className="w-full h-16 pl-5 pr-14 text-xl font-bold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:border-amber-600 focus:ring-4 focus:ring-amber-200 focus:outline-none appearance-none cursor-pointer"
                     >
                       {categories.map((cat) => (
                         <option key={cat} value={cat}>
@@ -454,7 +454,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                         </option>
                       ))}
                     </select>
-                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-emerald-700">
+                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-amber-700">
                       <ChevronDown className="w-7 h-7 stroke-[3]" />
                     </div>
                   </div>
@@ -462,14 +462,14 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
 
                 <div className="bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs">
                   <label className="block text-lg font-extrabold text-slate-800 mb-3 flex items-center gap-2">
-                    <Scale className="w-6 h-6 text-emerald-600" />
+                    <Scale className="w-6 h-6 text-amber-700" />
                     <span>Unidade de Medida Padrão</span> <span className="text-red-600">*</span>
                   </label>
                   <div className="relative">
                     <select
                       value={manualUnit}
                       onChange={(e) => setManualUnit(e.target.value)}
-                      className="w-full h-16 pl-5 pr-14 text-xl font-bold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:border-emerald-600 focus:ring-4 focus:ring-emerald-200 focus:outline-none appearance-none cursor-pointer"
+                      className="w-full h-16 pl-5 pr-14 text-xl font-bold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:border-amber-600 focus:ring-4 focus:ring-amber-200 focus:outline-none appearance-none cursor-pointer"
                     >
                       {standardUnits.map((u) => (
                         <option key={u} value={u}>
@@ -477,7 +477,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                         </option>
                       ))}
                     </select>
-                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-emerald-700">
+                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-amber-700">
                       <ChevronDown className="w-7 h-7 stroke-[3]" />
                     </div>
                   </div>
@@ -488,7 +488,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                       value={manualCustomUnit}
                       onChange={(e) => setManualCustomUnit(e.target.value)}
                       placeholder="Digite a unidade (ex: garrafa, lata)"
-                      className="w-full h-16 px-5 text-xl font-bold text-slate-900 bg-white border-2 border-emerald-500 rounded-2xl mt-4 focus:outline-none focus:ring-4 focus:ring-emerald-200"
+                      className="w-full h-16 px-5 text-xl font-bold text-slate-900 bg-white border-2 border-amber-500 rounded-2xl mt-4 focus:outline-none focus:ring-4 focus:ring-amber-200"
                     />
                   )}
                 </div>
@@ -496,7 +496,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
 
               <div className="bg-white p-5 rounded-2xl border-2 border-slate-200 shadow-xs">
                 <label className="block text-lg font-extrabold text-slate-800 mb-3 flex items-center gap-2">
-                  <FileText className="w-6 h-6 text-emerald-600" />
+                  <FileText className="w-6 h-6 text-amber-700" />
                   <span>Observações / Detalhes (Opcional)</span>
                 </label>
 
@@ -505,7 +505,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                   value={manualDetails}
                   onChange={(e) => setManualDetails(e.target.value)}
                   placeholder="Ex: firmes, não podres, corte magro, etc."
-                  className="w-full h-16 px-5 text-xl font-semibold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:border-emerald-600 focus:ring-4 focus:ring-emerald-200 focus:outline-none mb-4"
+                  className="w-full h-16 px-5 text-xl font-semibold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-2xl focus:border-amber-600 focus:ring-4 focus:ring-amber-200 focus:outline-none mb-4"
                 />
 
                 <div className="flex flex-wrap gap-2.5">
@@ -514,7 +514,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
                       key={obs}
                       type="button"
                       onClick={() => handleChipClickManual(obs)}
-                      className="px-4 py-2.5 bg-slate-100 hover:bg-emerald-100 hover:text-emerald-900 rounded-xl font-bold text-base text-slate-800 border-2 border-slate-200 transition-all"
+                      className="px-4 py-2.5 bg-slate-100 hover:bg-amber-100 hover:text-amber-950 rounded-xl font-bold text-base text-slate-800 border-2 border-slate-200 transition-all"
                     >
                       + {obs}
                     </button>
@@ -524,7 +524,7 @@ export const AddProductForm: React.FC<AddProductFormProps> = ({ onAddProduct }) 
 
               <button
                 type="submit"
-                className="w-full py-5 px-6 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black text-xl rounded-2xl shadow-lg transition-all hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-emerald-300 flex items-center justify-center gap-2"
+                className="w-full py-5 px-6 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 hover:from-amber-700 hover:to-orange-700 text-white font-black text-xl rounded-2xl shadow-lg transition-all hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-amber-300 flex items-center justify-center gap-2"
               >
                 <span>+ SALVAR ITEM NO CATÁLOGO</span>
               </button>
