@@ -84,14 +84,14 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
               </h2>
             </div>
             <p className="text-slate-600 font-semibold text-base mt-1">
-              Quando o entregador do mercado chegar, marque o que veio certo ou o que faltou.
+              Toque no checkbox circular de cada item conforme for tirando das sacolas!
             </p>
           </div>
 
           {totalItems > 0 && (
             <button
               onClick={handleCompleteOrder}
-              className="py-4 px-6 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black text-lg rounded-2xl shadow-md transition-all flex items-center justify-center gap-2"
+              className="py-4 px-6 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black text-lg rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
             >
               <Archive className="w-6 h-6" />
               <span>CONCLUIR E ARQUIVAR</span>
@@ -118,21 +118,21 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="bg-green-100 border border-green-300 p-3 rounded-xl">
                   <span className="block text-2xl font-black text-green-900">{deliveredCount}</span>
-                  <span className="text-xs font-extrabold uppercase text-green-800">🟢 Entregues OK</span>
+                  <span className="text-xs font-extrabold uppercase text-green-800">🟢 ENTREGUES OK</span>
                 </div>
                 <div className="bg-red-100 border border-red-300 p-3 rounded-xl">
                   <span className="block text-2xl font-black text-red-900">{issuesCount}</span>
-                  <span className="text-xs font-extrabold uppercase text-red-800">🔴 Faltou / Errado</span>
+                  <span className="text-xs font-extrabold uppercase text-red-800">🔴 FALTOU / ERRO</span>
                 </div>
                 <div className="bg-amber-100 border border-amber-300 p-3 rounded-xl">
                   <span className="block text-2xl font-black text-amber-900">{pendingCount}</span>
-                  <span className="text-xs font-extrabold uppercase text-amber-800">⏳ Pendentes</span>
+                  <span className="text-xs font-extrabold uppercase text-amber-800">⏳ PENDENTES</span>
                 </div>
               </div>
             </div>
 
-            {/* Checklist Items List */}
-            <div className="space-y-4">
+            {/* Checklist Items List - Tactile Checkbox Redesign */}
+            <div className="space-y-3">
               {checklist.map((item, idx) => {
                 const isDelivered = item.status === 'delivered';
                 const isIssue = item.status === 'issue';
@@ -140,81 +140,108 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
                 return (
                   <div
                     key={item.product?.id ? `${item.product.id}_${idx}` : `item_${idx}`}
-                    className={`p-5 rounded-2xl border-3 transition-all ${
+                    className={`p-4 sm:p-5 rounded-2xl border-2 transition-all ${
                       isDelivered
-                        ? 'bg-green-50 border-green-500'
+                        ? 'bg-emerald-50/80 border-emerald-400 shadow-xs'
                         : isIssue
-                        ? 'bg-red-50 border-red-500'
-                        : 'bg-slate-50 border-slate-200'
+                        ? 'bg-red-50/80 border-red-400 shadow-xs'
+                        : 'bg-white border-slate-200 hover:border-blue-300 shadow-xs'
                     }`}
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-start gap-4">
+                    <div className="flex items-center justify-between gap-4">
+                      {/* Checkbox & Product Info */}
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        {/* Tactile Circular Checkbox */}
+                        <button
+                          type="button"
+                          onClick={() => onToggleStatus(item.product.id, 'delivered')}
+                          className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border-3 transition-all duration-200 ${
+                            isDelivered
+                              ? 'bg-emerald-600 border-emerald-700 text-white shadow-md scale-105 ring-4 ring-emerald-100'
+                              : 'bg-slate-50 border-slate-300 hover:border-emerald-500 text-transparent'
+                          }`}
+                          title={isDelivered ? 'Marcar como pendente' : 'Marcar como entregue'}
+                        >
+                          <Check className={`w-7 h-7 stroke-[3.5] transition-transform ${isDelivered ? 'scale-100' : 'scale-0'}`} />
+                        </button>
+
+                        {/* Product Photo */}
                         {item.product?.imageUrl && (
                           <img
                             src={item.product.imageUrl}
                             alt={item.product.name}
-                            className="w-16 h-16 object-cover rounded-2xl border border-slate-300 shrink-0"
+                            className="w-14 h-14 object-cover rounded-xl border border-slate-200 shrink-0 hidden sm:block"
                           />
                         )}
-                        <div>
-                          <span className="text-xs font-extrabold uppercase tracking-wider text-slate-500 bg-white px-2.5 py-0.5 rounded-md border border-slate-200">
-                            {item.product?.category}
-                          </span>
-                          <h3 className="text-xl font-black text-slate-900 leading-snug mt-1">
+
+                        {/* Product Details */}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                              {item.product?.category}
+                            </span>
+                            {isDelivered && (
+                              <span className="text-[11px] font-black uppercase text-emerald-800 bg-emerald-200 px-2 py-0.5 rounded-md">
+                                ✓ ENTREGUE
+                              </span>
+                            )}
+                            {isIssue && (
+                              <span className="text-[11px] font-black uppercase text-red-800 bg-red-200 px-2 py-0.5 rounded-md">
+                                ⚠ FALTOU
+                              </span>
+                            )}
+                          </div>
+
+                          <h3
+                            onClick={() => onToggleStatus(item.product.id, 'delivered')}
+                            className={`text-lg sm:text-xl font-black leading-snug mt-1 cursor-pointer transition-all ${
+                              isDelivered
+                                ? 'line-through text-slate-400'
+                                : 'text-slate-900'
+                            }`}
+                          >
                             {item.quantity} {item.unit || item.product?.defaultUnit} - {item.product?.name}
                           </h3>
+
                           {item.customDetails && (
-                            <p className="text-slate-600 font-semibold text-sm mt-0.5">
+                            <p className="text-slate-600 font-semibold text-xs sm:text-sm mt-0.5">
                               📌 {item.customDetails}
                             </p>
                           )}
+
                           {item.issueNote && (
-                            <p className="text-red-700 font-bold text-sm mt-1 bg-red-100 p-2 rounded-lg border border-red-200">
+                            <p className="text-red-700 font-bold text-xs sm:text-sm mt-1 bg-red-100 px-3 py-1 rounded-lg border border-red-200 inline-block">
                               ⚠️ Motivo: {item.issueNote}
                             </p>
                           )}
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex items-center gap-2 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => onToggleStatus(item.product.id, 'delivered')}
-                          className={`flex-1 sm:flex-none py-3 px-4 rounded-xl font-black text-base flex items-center justify-center gap-1.5 transition-all ${
-                            isDelivered
-                              ? 'bg-green-600 text-white shadow-md ring-2 ring-green-300'
-                              : 'bg-white hover:bg-green-100 text-slate-700 border-2 border-slate-300'
-                          }`}
-                        >
-                          <CheckCircle2 className="w-6 h-6 text-emerald-600" />
-                          <span>ENTREGUE</span>
-                        </button>
-
+                      {/* Issue Trigger Button */}
+                      <div className="shrink-0">
                         <button
                           type="button"
                           onClick={() => {
                             onToggleStatus(item.product.id, 'issue');
                             if (!isIssue) setEditingIssueId(item.product.id);
                           }}
-                          className={`flex-1 sm:flex-none py-3 px-4 rounded-xl font-black text-base flex items-center justify-center gap-1.5 transition-all ${
+                          className={`px-3.5 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1.5 transition-all border-2 ${
                             isIssue
-                              ? 'bg-red-600 text-white shadow-md ring-2 ring-red-300'
-                              : 'bg-white hover:bg-red-100 text-slate-700 border-2 border-slate-300'
+                              ? 'bg-red-600 text-white border-red-700 shadow-sm'
+                              : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300'
                           }`}
                         >
-                          <XCircle className="w-6 h-6 text-red-600" />
-                          <span>FALTOU</span>
+                          <AlertTriangle className="w-4 h-4" />
+                          <span>FALTOU?</span>
                         </button>
                       </div>
                     </div>
 
                     {/* Issue Note Input Field */}
                     {isIssue && (editingIssueId === item.product.id || !item.issueNote) && (
-                      <div className="mt-4 pt-3 border-t border-red-200">
-                        <label className="block text-sm font-bold text-red-900 mb-1">
-                          Descreva o problema (opcional):
+                      <div className="mt-4 pt-3 border-t border-red-200 animate-in fade-in duration-200">
+                        <label className="block text-xs font-bold text-red-900 mb-1">
+                          Descreva o problema com este produto (opcional):
                         </label>
                         <div className="flex gap-2">
                           <input
@@ -222,12 +249,12 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
                             value={item.issueNote || ''}
                             onChange={(e) => onSetIssueNote(item.product.id, e.target.value)}
                             placeholder="Ex: veio rasgado, produto vencido, não veio..."
-                            className="flex-1 px-4 py-2 text-base font-semibold text-slate-900 bg-white border-2 border-red-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400"
+                            className="flex-1 px-4 py-2 text-sm font-semibold text-slate-900 bg-white border-2 border-red-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400"
                           />
                           <button
                             type="button"
                             onClick={() => setEditingIssueId(null)}
-                            className="px-4 py-2 bg-red-600 text-white font-bold rounded-xl"
+                            className="px-4 py-2 bg-red-600 text-white font-black text-sm rounded-xl hover:bg-red-700"
                           >
                             OK
                           </button>
