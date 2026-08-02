@@ -14,6 +14,10 @@ import {
   AlertTriangle,
   ShoppingBag,
   Share2,
+  Printer,
+  DollarSign,
+  Maximize2,
+  Sparkles,
 } from 'lucide-react';
 
 interface ReadyListProps {
@@ -32,14 +36,22 @@ export const ReadyList: React.FC<ReadyListProps> = ({
   onEditProductModal,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [isSupermarketMode, setIsSupermarketMode] = useState(false);
 
   const rawMessage = generateWhatsAppMessage(cart);
+
+  // Calculate estimated total price in R$
+  const estimatedTotalCost = cart.reduce((acc, item) => {
+    const qtyNum = typeof item.quantity === 'number' ? item.quantity : parseFloat(item.quantity as string) || 1;
+    const price = item.itemPrice || item.product.estimatedPrice || 0;
+    return acc + qtyNum * price;
+  }, 0);
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(rawMessage);
       setCopied(true);
-      
+
       confetti({
         particleCount: 80,
         spread: 70,
@@ -61,6 +73,10 @@ export const ReadyList: React.FC<ReadyListProps> = ({
 
     const encodedText = encodeURIComponent(rawMessage);
     window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+  };
+
+  const handlePrintPDF = () => {
+    window.print();
   };
 
   const handleIncrement = (item: CartItem) => {
@@ -86,14 +102,14 @@ export const ReadyList: React.FC<ReadyListProps> = ({
     'Padaria',
     'Mercearia',
     'Bebidas',
-    'Limpeza & Higiene',
-    'Outros',
+    'Limpeza',
+    'Higiene Pessoal',
   ];
 
   if (cart.length === 0) {
     return (
       <div className="bg-white rounded-3xl p-10 text-center border-2 border-slate-200 shadow-sm max-w-2xl mx-auto my-6">
-        <div className="w-24 h-24 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-24 h-24 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-6">
           <ShoppingBag className="w-12 h-12 stroke-[1.5]" />
         </div>
         <h2 className="text-3xl font-black text-slate-800 mb-3">Sua lista está vazia!</h2>
@@ -105,54 +121,87 @@ export const ReadyList: React.FC<ReadyListProps> = ({
   }
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
-      {/* Top Action Header */}
-      <div className="bg-white rounded-3xl p-6 shadow-md border-2 border-slate-200 space-y-4">
-        <h2 className="text-2xl font-black text-slate-900 text-center flex items-center justify-center gap-2">
-          <Share2 className="w-7 h-7 text-green-600" />
-          ENVIAR OU COPIAR SUA LISTA PRONTA
-        </h2>
+    <div className={`space-y-8 max-w-4xl mx-auto ${isSupermarketMode ? 'text-xl' : ''}`}>
+      {/* Top Action Header - Warm Amber & Terracotta Theme */}
+      <div className="bg-white rounded-3xl p-6 shadow-md border-2 border-slate-200 space-y-4 print:hidden">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
+            <Share2 className="w-7 h-7 text-amber-600" />
+            ENVIAR OU COPIAR SUA LISTA PRONTA
+          </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          {/* Supermarket Store Focus Mode Switcher */}
+          <button
+            type="button"
+            onClick={() => setIsSupermarketMode(!isSupermarketMode)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-extrabold text-sm border-2 transition-all ${
+              isSupermarketMode
+                ? 'bg-amber-600 text-white border-amber-700 shadow-md ring-2 ring-amber-300'
+                : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+            }`}
+          >
+            <Maximize2 className="w-5 h-5" />
+            <span>{isSupermarketMode ? '🛒 MODO MERCADO (ATIVO)' : '📱 ATIVAR MODO MERCADO'}</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
           {/* Main Action WhatsApp Button */}
           <button
             onClick={handleSendWhatsApp}
-            className="w-full py-5 px-6 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-black text-xl rounded-2xl shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-3 focus:outline-none focus:ring-4 focus:ring-green-300"
+            className="w-full py-4 px-4 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-black text-lg rounded-2xl shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-green-300"
           >
-            <MessageSquare className="w-8 h-8 fill-current" />
-            <span>ENVIAR NO WHATSAPP</span>
+            <MessageSquare className="w-6 h-6 fill-current" />
+            <span>WHATSAPP</span>
           </button>
 
           {/* Copy Button */}
           <button
             onClick={handleCopy}
-            className={`w-full py-5 px-6 font-black text-xl rounded-2xl shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-3 focus:outline-none focus:ring-4 ${
+            className={`w-full py-4 px-4 font-black text-lg rounded-2xl shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 focus:outline-none focus:ring-4 ${
               copied
-                ? 'bg-blue-800 text-white ring-4 ring-blue-300'
-                : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white focus:ring-blue-300'
+                ? 'bg-amber-800 text-white ring-4 ring-amber-300'
+                : 'bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white focus:ring-amber-300'
             }`}
           >
             {copied ? (
               <>
-                <Check className="w-8 h-8 stroke-[3]" />
-                <span>LISTA COPIADA!</span>
+                <Check className="w-6 h-6 stroke-[3]" />
+                <span>COPIADO!</span>
               </>
             ) : (
               <>
-                <Copy className="w-8 h-8 stroke-[2.5]" />
-                <span>COPIAR TEXTO DA LISTA</span>
+                <Copy className="w-6 h-6 stroke-[2.5]" />
+                <span>COPIAR TEXTO</span>
               </>
             )}
+          </button>
+
+          {/* Export PDF / Print Button */}
+          <button
+            onClick={handlePrintPDF}
+            className="w-full py-4 px-4 bg-slate-800 hover:bg-slate-900 text-white font-black text-lg rounded-2xl shadow-md transition-all hover:scale-[1.01] flex items-center justify-center gap-2"
+          >
+            <Printer className="w-6 h-6" />
+            <span>EXPORTAR PDF</span>
           </button>
         </div>
       </div>
 
       {/* Formatted List Preview Card */}
       <div className="bg-white rounded-3xl p-6 md:p-8 shadow-md border-2 border-slate-200">
-        <div className="flex items-center justify-between border-b-2 border-slate-200 pb-4 mb-6">
-          <h3 className="text-2xl font-black text-slate-900">
-            🛒 LISTA DA SEMANA ({cart.length} {cart.length === 1 ? 'item' : 'itens'})
-          </h3>
+        <div className="flex items-center justify-between border-b-2 border-slate-200 pb-4 mb-6 flex-wrap gap-4">
+          <div>
+            <h3 className="text-2xl font-black text-slate-900">
+              🛒 LISTA DA SEMANA ({cart.length} {cart.length === 1 ? 'item' : 'itens'})
+            </h3>
+            {estimatedTotalCost > 0 && (
+              <div className="flex items-center gap-2 text-amber-900 bg-amber-100 border border-amber-300 px-3 py-1 rounded-xl text-base font-extrabold mt-2">
+                <DollarSign className="w-5 h-5 text-amber-700" />
+                <span>Estimativa Total: R$ {estimatedTotalCost.toFixed(2).replace('.', ',')}</span>
+              </div>
+            )}
+          </div>
 
           <button
             onClick={() => {
@@ -160,7 +209,7 @@ export const ReadyList: React.FC<ReadyListProps> = ({
                 onClearCart();
               }
             }}
-            className="flex items-center gap-2 text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 font-extrabold text-base px-4 py-2 rounded-xl transition-colors"
+            className="flex items-center gap-2 text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 font-extrabold text-base px-4 py-2 rounded-xl transition-colors print:hidden"
           >
             <Trash2 className="w-5 h-5" />
             Limpar Tudo
@@ -175,7 +224,7 @@ export const ReadyList: React.FC<ReadyListProps> = ({
 
             return (
               <div key={cat} className="space-y-4">
-                <h4 className="text-2xl font-black text-slate-900 bg-slate-100 px-4 py-2 rounded-xl border-l-8 border-blue-600">
+                <h4 className="text-2xl font-black text-slate-900 bg-slate-100 px-4 py-2 rounded-xl border-l-8 border-amber-600">
                   {cat.toUpperCase()}
                 </h4>
 
@@ -206,7 +255,7 @@ export const ReadyList: React.FC<ReadyListProps> = ({
                           className="cursor-pointer flex-1"
                         >
                           <div className="flex items-baseline gap-2 flex-wrap">
-                            <span className="text-2xl font-black text-blue-700 bg-blue-100 px-3 py-1 rounded-xl">
+                            <span className="text-2xl font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-xl border border-amber-200">
                               {item.quantity} {displayUnit}
                             </span>
                             <span className="text-2xl font-black text-slate-900">
@@ -221,7 +270,7 @@ export const ReadyList: React.FC<ReadyListProps> = ({
                         </div>
 
                         {/* Quantity Controls & Delete */}
-                        <div className="flex items-center gap-2 self-end sm:self-center">
+                        <div className="flex items-center gap-2 self-end sm:self-center print:hidden">
                           <button
                             onClick={() => handleDecrement(item)}
                             className="w-12 h-12 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-800 rounded-xl flex items-center justify-center font-black text-2xl transition-colors"
@@ -266,11 +315,11 @@ export const ReadyList: React.FC<ReadyListProps> = ({
       </div>
 
       {/* Raw WhatsApp Message Preview Box */}
-      <div className="bg-slate-900 text-slate-100 rounded-3xl p-6 shadow-md">
+      <div className="bg-slate-900 text-slate-100 rounded-3xl p-6 shadow-md print:hidden">
         <h4 className="text-xl font-bold text-slate-300 mb-3 flex items-center gap-2">
           <span>📱 PRÉ-VISUALIZAÇÃO MENSAGEM DO WHATSAPP:</span>
         </h4>
-        <pre className="whitespace-pre-wrap font-mono text-lg bg-slate-950 p-5 rounded-2xl border border-slate-800 text-green-400 overflow-x-auto leading-relaxed">
+        <pre className="whitespace-pre-wrap font-mono text-lg bg-slate-950 p-5 rounded-2xl border border-slate-800 text-amber-400 overflow-x-auto leading-relaxed">
           {rawMessage}
         </pre>
       </div>

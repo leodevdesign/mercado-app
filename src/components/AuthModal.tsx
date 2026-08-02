@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   User,
   Lock,
@@ -15,6 +15,7 @@ import {
   Globe,
   Camera,
   Image as ImageIcon,
+  Upload,
 } from 'lucide-react';
 import { auth, googleProvider } from '@/lib/firebase';
 import { signInWithPopup } from 'firebase/auth';
@@ -51,6 +52,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [familyCode, setFamilyCode] = useState('FAMILIA-NEXT-2026');
   const [avatarUrl, setAvatarUrl] = useState<string>('');
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Preset avatar choices
   const presetAvatars = [
@@ -62,6 +64,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   if (!isOpen) return null;
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const resultStr = reader.result as string;
+        setAvatarUrl(resultStr);
+        if (currentUser) {
+          onLogin({
+            ...currentUser,
+            avatarUrl: resultStr,
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
@@ -72,7 +92,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       email: email.trim(),
       role,
       familyCode: familyCode.trim().toUpperCase() || 'FAMILIA-CASA',
-      avatarUrl: avatarUrl || undefined,
+      avatarUrl: avatarUrl || currentUser?.avatarUrl || undefined,
     };
 
     onLogin(loggedUser);
@@ -91,21 +111,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         email: user.email || 'google_user@gmail.com',
         role,
         familyCode: familyCode.trim().toUpperCase() || 'FAMILIA-CASA',
-        avatarUrl: user.photoURL || undefined,
+        // Preserve user's custom uploaded avatar if set, else use Google photo
+        avatarUrl: currentUser?.avatarUrl || user.photoURL || undefined,
       };
 
       onLogin(loggedUser);
       onClose();
     } catch (err) {
       console.warn('Simulando Login do Google para ambiente de desenvolvimento:', err);
-      // Fallback for dev / pop-up fallback
       const loggedUser: UserProfile = {
         uid: 'google_user_' + Date.now(),
         name: 'Conta do Google (Leo)',
         email: 'leo.google@gmail.com',
         role,
         familyCode: familyCode.trim().toUpperCase() || 'FAMILIA-CASA',
-        avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+        avatarUrl: currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
       };
       onLogin(loggedUser);
       onClose();
@@ -116,16 +136,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200">
+      {/* Hidden File Input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileUpload}
+        accept="image/*"
+        className="hidden"
+      />
+
       <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl border-2 border-slate-200 overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-700 via-teal-600 to-indigo-700 p-6 text-white flex items-center justify-between">
+        {/* Header - Warm Amber & Terracotta Theme */}
+        <div className="bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 p-6 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Users className="w-8 h-8 stroke-[2.5]" />
             <div>
               <h2 className="text-2xl font-black">
                 {currentUser ? 'SEU PERFIL DE FAMÍLIA' : 'ENTRAR NO MERCADO APP'}
               </h2>
-              <p className="text-emerald-100 text-sm font-medium">
+              <p className="text-amber-100 text-sm font-medium">
                 {currentUser ? 'Alterne ou gerencie sua conta' : 'Acesse suas listas pessoais e da casa'}
               </p>
             </div>
@@ -143,23 +172,37 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {currentUser ? (
             /* Logged In State */
             <div className="space-y-6 text-center">
-              <div className="relative w-24 h-24 mx-auto">
-                {currentUser.avatarUrl ? (
+              {/* Interactive Avatar Upload Box */}
+              <div className="relative group w-28 h-28 mx-auto cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                {currentUser.avatarUrl || avatarUrl ? (
                   <img
-                    src={currentUser.avatarUrl}
+                    src={avatarUrl || currentUser.avatarUrl}
                     alt={currentUser.name}
-                    className="w-24 h-24 rounded-full object-cover border-4 border-emerald-500 shadow-md"
+                    className="w-28 h-28 rounded-full object-cover border-4 border-amber-500 shadow-md group-hover:opacity-80 transition-all"
                   />
                 ) : (
-                  <div className="w-24 h-24 bg-emerald-100 border-4 border-emerald-500 text-emerald-700 rounded-full flex items-center justify-center text-4xl font-black shadow-md">
+                  <div className="w-28 h-28 bg-amber-100 border-4 border-amber-500 text-amber-800 rounded-full flex items-center justify-center text-4xl font-black shadow-md group-hover:bg-amber-200 transition-all">
                     {currentUser.name.charAt(0).toUpperCase()}
                   </div>
                 )}
+                <div className="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all">
+                  <Camera className="w-8 h-8 mb-1" />
+                  <span className="text-xs font-black">TROCAR FOTO</span>
+                </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 font-extrabold text-sm rounded-xl border border-amber-300 transition-all"
+              >
+                <Upload className="w-4 h-4" />
+                <span>Enviar Foto do Celular / PC</span>
+              </button>
 
               <div>
                 <h3 className="text-2xl font-black text-slate-900">{currentUser.name}</h3>
-                <span className="inline-block mt-1 px-3 py-1 bg-emerald-100 text-emerald-800 font-extrabold text-sm rounded-full border border-emerald-200">
+                <span className="inline-block mt-1 px-3 py-1 bg-amber-100 text-amber-900 font-extrabold text-sm rounded-full border border-amber-200">
                   {currentUser.role}
                 </span>
                 <p className="text-slate-500 font-medium text-sm mt-1">{currentUser.email}</p>
@@ -168,7 +211,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="bg-slate-50 p-4 rounded-2xl border-2 border-slate-200 text-left space-y-2">
                 <div className="flex items-center justify-between text-sm font-bold text-slate-700">
                   <span>Código do Grupo da Família:</span>
-                  <span className="bg-emerald-100 text-emerald-900 px-2.5 py-0.5 rounded-lg border border-emerald-200 font-black">
+                  <span className="bg-amber-100 text-amber-950 px-2.5 py-0.5 rounded-lg border border-amber-300 font-black">
                     {currentUser.familyCode}
                   </span>
                 </div>
@@ -232,7 +275,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     onClick={() => setAuthMode('login')}
                     className={`py-2 rounded-lg font-extrabold text-sm flex items-center justify-center gap-1.5 transition-all ${
                       authMode === 'login'
-                        ? 'bg-white text-emerald-700 shadow-xs'
+                        ? 'bg-white text-amber-800 shadow-xs'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -244,7 +287,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     onClick={() => setAuthMode('register')}
                     className={`py-2 rounded-lg font-extrabold text-sm flex items-center justify-center gap-1.5 transition-all ${
                       authMode === 'register'
-                        ? 'bg-white text-emerald-700 shadow-xs'
+                        ? 'bg-white text-amber-800 shadow-xs'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -258,35 +301,52 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <>
                     <div>
                       <label className="block text-xs font-extrabold text-slate-700 mb-1">
-                        Escolha sua Fotinha de Perfil:
+                        Sua Fotinha de Perfil:
                       </label>
+
+                      <div className="flex items-center gap-2 mb-2">
+                        {avatarUrl ? (
+                          <img
+                            src={avatarUrl}
+                            alt="Avatar Preview"
+                            className="w-12 h-12 rounded-full object-cover border-2 border-amber-500 shadow-sm"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-amber-100 border-2 border-amber-400 flex items-center justify-center text-amber-800 font-black">
+                            <Camera className="w-6 h-6" />
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs rounded-xl border border-amber-300 transition-all flex items-center gap-1.5"
+                        >
+                          <Upload className="w-4 h-4" />
+                          <span>Enviar Foto do Celular / PC</span>
+                        </button>
+                      </div>
+
                       <div className="flex items-center gap-2 mb-2">
                         {presetAvatars.map((preset, idx) => (
                           <button
                             key={idx}
                             type="button"
                             onClick={() => setAvatarUrl(preset.url)}
-                            className={`p-1 rounded-full border-2 transition-all ${
+                            className={`p-0.5 rounded-full border-2 transition-all ${
                               avatarUrl === preset.url
-                                ? 'border-emerald-600 ring-2 ring-emerald-300 scale-110'
+                                ? 'border-amber-600 ring-2 ring-amber-300 scale-110'
                                 : 'border-slate-200 hover:border-slate-400'
                             }`}
                           >
                             <img
                               src={preset.url}
                               alt={preset.label}
-                              className="w-10 h-10 rounded-full object-cover"
+                              className="w-8 h-8 rounded-full object-cover"
                             />
                           </button>
                         ))}
                       </div>
-                      <input
-                        type="url"
-                        value={avatarUrl}
-                        onChange={(e) => setAvatarUrl(e.target.value)}
-                        placeholder="Ou cole a URL da sua foto..."
-                        className="w-full h-10 px-3 text-xs font-medium text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:border-emerald-600 focus:outline-none"
-                      />
                     </div>
 
                     <div>
@@ -301,7 +361,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           placeholder="Ex: Leo, Pai, Mãe"
-                          className="w-full h-11 pl-10 pr-3 text-base font-semibold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl focus:border-emerald-600 focus:outline-none"
+                          className="w-full h-11 pl-10 pr-3 text-base font-semibold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl focus:border-amber-600 focus:outline-none"
                         />
                       </div>
                     </div>
@@ -320,7 +380,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="seuemail@exemplo.com"
-                      className="w-full h-11 pl-10 pr-3 text-base font-semibold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl focus:border-emerald-600 focus:outline-none"
+                      className="w-full h-11 pl-10 pr-3 text-base font-semibold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl focus:border-amber-600 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -337,7 +397,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full h-11 pl-10 pr-3 text-base font-semibold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl focus:border-emerald-600 focus:outline-none"
+                      className="w-full h-11 pl-10 pr-3 text-base font-semibold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl focus:border-amber-600 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -356,7 +416,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                             onClick={() => setRole(r)}
                             className={`py-2 rounded-lg font-black text-xs border-2 transition-all ${
                               role === r
-                                ? 'bg-emerald-600 text-white border-emerald-700 shadow-xs'
+                                ? 'bg-amber-600 text-white border-amber-700 shadow-xs'
                                 : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100'
                             }`}
                           >
@@ -375,7 +435,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         value={familyCode}
                         onChange={(e) => setFamilyCode(e.target.value)}
                         placeholder="Ex: FAMILIA-NEXT-2026"
-                        className="w-full h-10 px-3 text-sm font-bold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl focus:border-emerald-600 focus:outline-none uppercase"
+                        className="w-full h-10 px-3 text-sm font-bold text-slate-900 bg-slate-50 border-2 border-slate-300 rounded-xl focus:border-amber-600 focus:outline-none uppercase"
                       />
                     </div>
                   </>
@@ -383,7 +443,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
                 <button
                   type="submit"
-                  className="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-lg rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
+                  className="w-full py-4 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 hover:from-amber-700 hover:to-orange-700 text-white font-black text-lg rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
                 >
                   <span>{authMode === 'login' ? 'ENTRAR NA CONTA' : 'CRIAR CONTA DA FAMÍLIA'}</span>
                 </button>

@@ -8,6 +8,11 @@ export type Category =
   | 'Bebidas'
   | 'Padaria';
 
+export interface PriceRecord {
+  date: string;
+  price: number;
+}
+
 export interface BaseProduct {
   id: string;
   name: string;             // ex: "Banana prata", "Arroz Camil"
@@ -18,6 +23,8 @@ export interface BaseProduct {
   variety?: string;         // ex: "Prata", "Patinho", "Gala", "Carioca"
   brand?: string;           // ex: "Ypê", "Dove", "Colgate", "Camil", "Tio João"
   imageUrl?: string;        // URL da imagem ou ícone ilustrativo
+  estimatedPrice?: number;  // R$ Preço estimado por unidade
+  priceHistory?: PriceRecord[]; // Histórico de variação de preços
 }
 
 export interface CartItem {
@@ -25,6 +32,7 @@ export interface CartItem {
   quantity: string | number; // ex: 2, 5, "600g", "1/2"
   unit?: string;             // ex: "kg", "unidades", "g" (caso alterado ao adicionar)
   customDetails?: string;    // observação personalizada específica desta compra
+  itemPrice?: number;        // Preço unitário ajustado para esta compra
 }
 
 export type DeliveryStatus = 'pending' | 'delivered' | 'issue';
@@ -41,4 +49,5 @@ export interface ArchivedOrder {
   totalItems: number;
   deliveredCount: number;
   issuesCount: number;
+  totalCost?: number;
 }

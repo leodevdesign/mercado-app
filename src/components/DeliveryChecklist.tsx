@@ -16,6 +16,7 @@ import {
   RotateCcw,
   Check,
   AlertTriangle,
+  Bell,
 } from 'lucide-react';
 
 interface DeliveryChecklistProps {
@@ -67,9 +68,26 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
     <div className="space-y-8">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 right-4 left-4 sm:left-auto z-50 bg-slate-900 text-white font-bold text-lg px-6 py-4 rounded-2xl shadow-2xl border-2 border-emerald-400 animate-in slide-in-from-top-4 duration-300 flex items-center gap-3">
-          <Sparkles className="w-6 h-6 text-yellow-400 shrink-0 animate-bounce" />
+        <div className="fixed top-20 right-4 left-4 sm:left-auto z-50 bg-slate-900 text-white font-bold text-lg px-6 py-4 rounded-2xl shadow-2xl border-2 border-amber-400 animate-in slide-in-from-top-4 duration-300 flex items-center gap-3">
+          <Sparkles className="w-6 h-6 text-amber-400 shrink-0 animate-bounce" />
           <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* MISSING ITEMS ALERT BADGE */}
+      {issuesCount > 0 && (
+        <div className="bg-red-50 border-2 border-red-300 rounded-3xl p-5 shadow-sm flex items-center gap-4 text-red-950 animate-in zoom-in-95 duration-200">
+          <div className="p-3 bg-red-600 text-white rounded-2xl shrink-0 shadow-md">
+            <Bell className="w-7 h-7 animate-bounce" />
+          </div>
+          <div>
+            <h3 className="text-xl font-black">
+              ⚠️ ATENÇÃO: {issuesCount} {issuesCount === 1 ? 'ITEM FALTOU' : 'ITENS FALTARAM'} NO MERCADO!
+            </h3>
+            <p className="text-red-800 font-semibold text-sm mt-0.5">
+              Verifique os itens marcados em vermelho abaixo para avisar o mercado ou comprar em outro local.
+            </p>
+          </div>
         </div>
       )}
 
@@ -78,7 +96,7 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b-2 border-slate-100">
           <div>
             <div className="flex items-center gap-2">
-              <Clock className="w-8 h-8 text-blue-600" />
+              <Clock className="w-8 h-8 text-amber-700" />
               <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
                 CONFERIR COMPRAS QUE CHEGARAM
               </h2>
@@ -91,7 +109,7 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
           {totalItems > 0 && (
             <button
               onClick={handleCompleteOrder}
-              className="py-4 px-6 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black text-lg rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
+              className="py-4 px-6 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-black text-lg rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.01]"
             >
               <Archive className="w-6 h-6" />
               <span>CONCLUIR E ARQUIVAR</span>
@@ -110,23 +128,23 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
 
               <div className="w-full h-5 bg-slate-200 rounded-full overflow-hidden p-0.5 border border-slate-300">
                 <div
-                  className="h-full bg-gradient-to-r from-blue-600 via-emerald-500 to-green-600 rounded-full transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-600 rounded-full transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
                 ></div>
               </div>
 
               <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="bg-green-100 border border-green-300 p-3 rounded-xl">
-                  <span className="block text-2xl font-black text-green-900">{deliveredCount}</span>
-                  <span className="text-xs font-extrabold uppercase text-green-800">🟢 ENTREGUES OK</span>
+                <div className="bg-emerald-100 border border-emerald-300 p-3 rounded-xl">
+                  <span className="block text-2xl font-black text-emerald-900">{deliveredCount}</span>
+                  <span className="text-xs font-extrabold uppercase text-emerald-800">🟢 ENTREGUES OK</span>
                 </div>
                 <div className="bg-red-100 border border-red-300 p-3 rounded-xl">
                   <span className="block text-2xl font-black text-red-900">{issuesCount}</span>
                   <span className="text-xs font-extrabold uppercase text-red-800">🔴 FALTOU / ERRO</span>
                 </div>
                 <div className="bg-amber-100 border border-amber-300 p-3 rounded-xl">
-                  <span className="block text-2xl font-black text-amber-900">{pendingCount}</span>
-                  <span className="text-xs font-extrabold uppercase text-amber-800">⏳ PENDENTES</span>
+                  <span className="block text-2xl font-black text-amber-950">{pendingCount}</span>
+                  <span className="text-xs font-extrabold uppercase text-amber-900">⏳ PENDENTES</span>
                 </div>
               </div>
             </div>
@@ -145,7 +163,7 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
                         ? 'bg-emerald-50/80 border-emerald-400 shadow-xs'
                         : isIssue
                         ? 'bg-red-50/80 border-red-400 shadow-xs'
-                        : 'bg-white border-slate-200 hover:border-blue-300 shadow-xs'
+                        : 'bg-white border-slate-200 hover:border-amber-300 shadow-xs'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-4">
@@ -280,7 +298,7 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
       {/* SECTION 2: CALENDAR & ARCHIVED ORDERS HISTORY */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border-2 border-slate-200">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-slate-100">
-          <Calendar className="w-8 h-8 text-indigo-600" />
+          <Calendar className="w-8 h-8 text-amber-700" />
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
               📅 CALENDÁRIO & HISTÓRICO DE COMPRAS
@@ -299,12 +317,12 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
               return (
                 <div
                   key={order.id}
-                  className="bg-slate-50 border-2 border-slate-300 rounded-3xl p-5 sm:p-6 transition-all hover:border-indigo-400"
+                  className="bg-slate-50 border-2 border-slate-300 rounded-3xl p-5 sm:p-6 transition-all hover:border-amber-400"
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     {/* Date and Summary Info */}
                     <div className="flex items-center gap-4">
-                      <div className="p-3.5 bg-indigo-100 text-indigo-900 rounded-2xl border border-indigo-200 shrink-0">
+                      <div className="p-3.5 bg-amber-100 text-amber-950 rounded-2xl border border-amber-300 shrink-0">
                         <Calendar className="w-8 h-8" />
                       </div>
                       <div>
@@ -323,7 +341,7 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
                       <button
                         type="button"
                         onClick={() => handleReuseOrderClick(order)}
-                        className="flex-1 md:flex-none py-3.5 px-5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-base sm:text-lg rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.02]"
+                        className="flex-1 md:flex-none py-3.5 px-5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-black text-base sm:text-lg rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.02]"
                       >
                         <RotateCcw className="w-6 h-6 stroke-[2.5]" />
                         <span>🔄 REAPROVEITAR ESTA LISTA</span>
@@ -364,7 +382,7 @@ export const DeliveryChecklist: React.FC<DeliveryChecklistProps> = ({
                         {order.items.map((item, idx) => (
                           <div key={idx} className="bg-white p-3 rounded-xl border border-slate-200 text-base font-bold text-slate-800 flex items-center justify-between">
                             <span>• {item.quantity} {item.unit || item.product?.defaultUnit} - {item.product?.name}</span>
-                            {item.status === 'delivered' && <span className="text-xs text-green-700 bg-green-100 px-2 py-0.5 rounded-md">🟢 OK</span>}
+                            {item.status === 'delivered' && <span className="text-xs text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md">🟢 OK</span>}
                             {item.status === 'issue' && <span className="text-xs text-red-700 bg-red-100 px-2 py-0.5 rounded-md">🔴 Faltou</span>}
                           </div>
                         ))}

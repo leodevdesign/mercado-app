@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EA580C"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+  <!-- Handle -->
+  <path d="M192 180 V140 C192 104.6 220.6 76 256 76 C291.4 76 320 104.6 320 140 V180" fill="none" stroke="#FFFFFF" stroke-width="32" stroke-linecap="round"/>
+  <!-- Bag Body -->
+  <path d="M128 180 L152 420 C154 438 168 452 186 452 H326 C344 452 358 438 360 420 L384 180 Z" fill="#FFFFFF" opacity="0.95"/>
+  <!-- Leaf Accent -->
+  <path d="M256 260 C290 230 340 240 340 280 C340 320 290 350 256 350 C222 350 172 320 172 280 C172 240 222 230 256 260 Z" fill="#10B981"/>
+  <path d="M256 260 V350" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+</svg>

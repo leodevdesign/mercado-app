@@ -21,7 +21,7 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Auth State (Default with avatar fallback)
+  // Auth State (Default logged in user, or prompt login)
   const [currentUser, setCurrentUser] = useState<UserProfile | null>({
     uid: 'user_default',
     name: 'Leo (Filho)',
@@ -30,6 +30,7 @@ export default function Home() {
     familyCode: 'FAMILIA-NEXT-2026',
     avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
   });
+
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // Zustand Store
@@ -68,9 +69,9 @@ export default function Home() {
 
   if (!isMounted) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-amber-50/20 flex items-center justify-center p-4">
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className="w-16 h-16 border-4 border-amber-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p className="text-2xl font-bold text-slate-700">Carregando sua lista de compras...</p>
         </div>
       </div>
@@ -116,20 +117,20 @@ export default function Home() {
   const totalChecklistCount = safeChecklist.length > 0 ? safeChecklist.length : totalCartCount;
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-16">
-      {/* Top Header - Modern Organic Emerald Theme */}
-      <header className="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-lg sticky top-0 z-40">
+    <div className="min-h-screen flex flex-col bg-amber-50/30 text-slate-900 pb-16">
+      {/* Top Header - Warm Amber & Terracotta Theme */}
+      <header className="bg-gradient-to-r from-amber-700 via-orange-600 to-amber-800 text-white shadow-lg sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
-                <Store className="w-9 h-9 text-white" />
+              <div className="p-2.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
+                <Store className="w-8 h-8 text-white" />
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
                   Meu Mercado
                 </h1>
-                <p className="text-emerald-100 text-sm sm:text-base font-semibold">
+                <p className="text-amber-100 text-sm sm:text-base font-semibold">
                   Lista fácil e rápida para WhatsApp
                 </p>
               </div>
@@ -138,7 +139,7 @@ export default function Home() {
             {totalCartCount > 0 && activeTab === 'catalog' && (
               <button
                 onClick={() => handleTabChange('ready')}
-                className="hidden md:flex items-center gap-2 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-amber-950 px-5 py-2.5 rounded-2xl font-black text-lg shadow-md transition-transform hover:scale-105"
+                className="hidden md:flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white px-5 py-2.5 rounded-2xl font-black text-lg shadow-md transition-transform hover:scale-105"
               >
                 <ClipboardList className="w-6 h-6" />
                 <span>Ver Lista ({totalCartCount})</span>
@@ -153,8 +154,8 @@ export default function Home() {
               onClick={() => handleTabChange('catalog')}
               className={`h-20 sm:h-22 px-2 sm:px-4 rounded-2xl font-black text-sm sm:text-lg flex flex-col items-center justify-center gap-1 transition-all shadow-sm relative ${
                 activeTab === 'catalog'
-                  ? 'bg-white text-emerald-900 shadow-md ring-4 ring-white/30 scale-[1.02]'
-                  : 'bg-emerald-900/60 hover:bg-emerald-900/90 text-white/90 border border-emerald-500/30'
+                  ? 'bg-white text-amber-900 shadow-md ring-4 ring-white/30 scale-[1.02]'
+                  : 'bg-amber-900/60 hover:bg-amber-900/90 text-white/90 border border-amber-400/30'
               }`}
             >
               <ShoppingBag className="w-6 h-6 stroke-[2.5] shrink-0" />
@@ -166,8 +167,8 @@ export default function Home() {
               onClick={() => handleTabChange('ready')}
               className={`h-20 sm:h-22 px-2 sm:px-4 rounded-2xl font-black text-sm sm:text-lg flex flex-col items-center justify-center gap-1 transition-all shadow-sm relative ${
                 activeTab === 'ready'
-                  ? 'bg-white text-emerald-900 shadow-md ring-4 ring-white/30 scale-[1.02]'
-                  : 'bg-emerald-900/60 hover:bg-emerald-900/90 text-white/90 border border-emerald-500/30'
+                  ? 'bg-white text-amber-900 shadow-md ring-4 ring-white/30 scale-[1.02]'
+                  : 'bg-amber-900/60 hover:bg-amber-900/90 text-white/90 border border-amber-400/30'
               }`}
             >
               <ClipboardList className="w-6 h-6 stroke-[2.5] shrink-0" />
@@ -184,8 +185,8 @@ export default function Home() {
               onClick={() => handleTabChange('checklist')}
               className={`h-20 sm:h-22 px-2 sm:px-4 rounded-2xl font-black text-sm sm:text-lg flex flex-col items-center justify-center gap-1 transition-all shadow-sm relative ${
                 activeTab === 'checklist'
-                  ? 'bg-white text-emerald-900 shadow-md ring-4 ring-white/30 scale-[1.02]'
-                  : 'bg-emerald-900/60 hover:bg-emerald-900/90 text-white/90 border border-emerald-500/30'
+                  ? 'bg-white text-amber-900 shadow-md ring-4 ring-white/30 scale-[1.02]'
+                  : 'bg-amber-900/60 hover:bg-amber-900/90 text-white/90 border border-amber-400/30'
               }`}
             >
               <PackageCheck className="w-6 h-6 stroke-[2.5] shrink-0" />
@@ -232,7 +233,7 @@ export default function Home() {
                     resetCatalogToDefault();
                   }
                 }}
-                className="flex items-center gap-1.5 text-emerald-800 hover:text-emerald-950 font-bold text-sm bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-200"
+                className="flex items-center gap-1.5 text-amber-800 hover:text-amber-950 font-bold text-sm bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-xl border border-amber-300"
               >
                 <RefreshCw className="w-4 h-4" />
                 Restaurar Padrões
@@ -276,7 +277,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="mt-12 py-6 text-center text-slate-500 border-t border-slate-200 text-base font-semibold">
-        <p>📱 Mercado App • Funciona 100% Offline e Sincronizado no Firebase</p>
+        <p>📱 Meu Mercado • Funciona 100% Offline e Sincronizado no Firebase</p>
       </footer>
 
       {/* Auth & Family Profile Modal */}

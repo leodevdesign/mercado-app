@@ -9,8 +9,29 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Lista de Mercado da Semana - Simples & Rápida",
-  description: "Monte sua lista de compras de forma fácil com apenas um toque e envie diretamente pelo WhatsApp.",
+  title: "Meu Mercado • Lista de Compras da Família",
+  description: "Monte e compartilhe sua lista de compras da semana com sua família em tempo real! Fácil, rápido e integrado com WhatsApp.",
+  openGraph: {
+    title: "🛒 Meu Mercado • Lista da Família",
+    description: "Monte e compartilhe sua lista de compras da semana de forma simples e rápida com sua família via WhatsApp!",
+    url: "https://mercado-app-alpha.vercel.app",
+    siteName: "Meu Mercado",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&auto=format&fit=crop&q=80",
+        width: 1200,
+        height: 630,
+        alt: "Meu Mercado App",
+      },
+    ],
+    locale: "pt_BR",
+    type: "website",
+  },
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export const viewport: Viewport = {
@@ -18,7 +39,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#2563EB",
+  themeColor: "#EA580C",
 };
 
 export default function RootLayout({
@@ -28,7 +49,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${outfit.variable} h-full antialiased font-sans`}>
-      <body className="min-h-full bg-slate-50 text-slate-900 flex flex-col selection:bg-blue-200">
+      <body className="min-h-full bg-amber-50/20 text-slate-900 flex flex-col selection:bg-amber-200">
         {children}
       </body>
     </html>
